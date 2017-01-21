@@ -19,7 +19,12 @@ namespace IoC3PO
 
         public TInterface Resolve<TInterface>()
         {
-            var typeRegistration = types[typeof(TInterface)];
+            var interfaceType = typeof(TInterface);
+            TypeRegistration typeRegistration;
+
+            types.TryGetValue(interfaceType, out typeRegistration);
+            if (typeRegistration == null) throw new TypeNotRegisteredException($"The interface {interfaceType} is not registered.");
+
             if (typeRegistration.LifeCycle == LifeCycle.Singleton)
             {
                 if (typeRegistration.RegisteredObject == null)
@@ -51,5 +56,12 @@ namespace IoC3PO
     {
         Transient,
         Singleton
+    }
+
+    public class TypeNotRegisteredException : Exception
+    {
+        public TypeNotRegisteredException(string message) : base(message)
+        {
+        }
     }
 }

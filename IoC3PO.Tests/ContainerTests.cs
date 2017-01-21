@@ -42,5 +42,16 @@ namespace IoC3PO.Tests
             var threepio2 = _container.Resolve<IProtocolDroid>();
             threepio1.ShouldBeSameAs(threepio2);
         }
+
+        public interface IAstromechDroid { }
+
+        [Fact]
+        public void throws_informative_message_when_type_not_registered()
+        {
+            Should.Throw<TypeNotRegisteredException>(() =>
+            {
+                _container.Resolve<IAstromechDroid>();
+            });
+        }
     }
 }
