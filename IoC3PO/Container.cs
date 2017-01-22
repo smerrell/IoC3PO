@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace IoC3PO
 {
     public class Container
     {
-        private Dictionary<Type, TypeRegistration> types = new Dictionary<Type, TypeRegistration>();
+        private Dictionary<Type, TypeRegistration> _registeredTypes = new Dictionary<Type, TypeRegistration>();
+
         public void Register<TInterface, TImplementation>()
         {
             Register<TInterface, TImplementation>(LifeCycle.Transient);
@@ -14,17 +14,22 @@ namespace IoC3PO
 
         public void Register<TInterface, TImplementation>(LifeCycle lifecycle)
         {
-            types.Add(typeof(TInterface), new TypeRegistration(lifecycle, typeof(TImplementation)));
+            _registeredTypes.Add(typeof(TInterface), new TypeRegistration(lifecycle, typeof(TImplementation)));
         }
 
         public TInterface Resolve<TInterface>()
         {
-            var interfaceType = typeof(TInterface);
-            TypeRegistration typeRegistration;
+            return (TInterface) Resolve(typeof(TInterface));
+        }
 
-            types.TryGetValue(interfaceType, out typeRegistration);
-            if (typeRegistration == null) throw new TypeNotRegisteredException($"The interface {interfaceType} is not registered.");
+        public object Resolve(Type typeToResolve)
+        {
+            if (!_registeredTypes.ContainsKey(typeToResolve))
+            {
+                throw new TypeNotRegisteredException($"The interface {typeToResolve} is not registered.");
+            }
 
+            var typeRegistration = _registeredTypes[typeToResolve];
             if (typeRegistration.LifeCycle == LifeCycle.Singleton)
             {
                 if (typeRegistration.RegisteredObject == null)
@@ -32,10 +37,10 @@ namespace IoC3PO
                     typeRegistration.RegisteredObject = Activator.CreateInstance(typeRegistration.RegisteredType);
                 }
 
-                return (TInterface) typeRegistration.RegisteredObject;
+                return typeRegistration.RegisteredObject;
             }
 
-            return (TInterface) Activator.CreateInstance(typeRegistration.RegisteredType);
+            return Activator.CreateInstance(typeRegistration.RegisteredType);
         }
     }
 
