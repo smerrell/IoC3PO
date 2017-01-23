@@ -23,6 +23,7 @@ namespace IoC3PO
         {
             return (TInterface) Resolve(typeof(TInterface));
         }
+
         private object Resolve(Type contract)
         {
             if (!_registeredTypes.ContainsKey(contract))
@@ -46,11 +47,15 @@ namespace IoC3PO
 
         private object createInstance(Type typeToCreate)
         {
-            var ctors = typeToCreate.GetConstructors();
-            var longestCtor = ctors.OrderBy(x => x.GetParameters().Length).First();
-            if (longestCtor.GetParameters().Length == 0) return Activator.CreateInstance(typeToCreate);
+            var longestCtor = typeToCreate
+                .GetConstructors()
+                .OrderBy(x => x.GetParameters().Length)
+                .First();
 
-            var ctorArgs = longestCtor.GetParameters().Select(param => Resolve(param.ParameterType)).ToArray();
+            var ctorArgs = longestCtor
+                .GetParameters()
+                .Select(param => Resolve(param.ParameterType))
+                .ToArray();
 
             return Activator.CreateInstance(typeToCreate, ctorArgs);
         }
