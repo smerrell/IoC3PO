@@ -1,6 +1,4 @@
-﻿using System;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Shouldly;
+﻿using Shouldly;
 using Xunit;
 
 namespace IoC3PO.Tests
