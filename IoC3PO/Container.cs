@@ -18,7 +18,7 @@ namespace IoC3PO
         {
             // create a lifecycle object here?
             var resolvedLifecycle = resolveLifecycle(lifecycle);
-            _registeredTypes.Add(typeof(TInterface), new TypeRegistration(lifecycle, resolvedLifecycle, typeof(TImplementation)));
+            _registeredTypes.Add(typeof(TInterface), new TypeRegistration(resolvedLifecycle, typeof(TImplementation)));
         }
 
         public TInterface Resolve<TInterface>()
@@ -54,50 +54,18 @@ namespace IoC3PO
                 return new SingletonLifecycle();
             }
 
-            return null;
-        }
-    }
-
-    public interface ILifeCycle
-    {
-        object CreateInstance(Type instanceType, object[] arguments);
-    }
-
-    public abstract class LifecycleBase
-    {
-        // rename as this causes confusion with the ILifeCycle create instance?
-        protected object createInstance(Type instanceType, object[] arguments)
-        {
-            return Activator.CreateInstance(instanceType, arguments);
-        }
-    }
-
-    public class SingletonLifecycle : LifecycleBase, ILifeCycle
-    {
-        private object singletonInstance;
-
-        public object CreateInstance(Type instanceType, object[] arguments)
-        {
-            if (singletonInstance == null)
-            {
-                singletonInstance = createInstance(instanceType, arguments);
-            }
-
-            return singletonInstance;
+            return new TransientLifecycle();
         }
     }
 
     public class TypeRegistration
     {
-        public LifeCycle LifeCycle { get; }
-        public ILifeCycle NewLifeCycle { get; }
+        public ILifeCycle Lifecycle { get; }
         public Type RegisteredType { get; }
-        public object RegisteredObject { get; set; }
 
-        public TypeRegistration(LifeCycle lifeCycle, ILifeCycle newLifeCycle, Type registeredType)
+        public TypeRegistration(ILifeCycle lifecycle, Type registeredType)
         {
-            NewLifeCycle = newLifeCycle;
-            LifeCycle = lifeCycle;
+            Lifecycle = lifecycle;
             RegisteredType = registeredType;
         }
 
@@ -111,20 +79,8 @@ namespace IoC3PO
 
         public object createInstance(object[] arguments)
         {
-            // use lifecycle here?
-            if (LifeCycle == LifeCycle.Singleton)
-            {
-                return NewLifeCycle.CreateInstance(RegisteredType, arguments);
-            }
-
-            return Activator.CreateInstance(RegisteredType, arguments);
+            return Lifecycle.CreateInstance(RegisteredType, arguments);
         }
-    }
-
-    public enum LifeCycle
-    {
-        Transient,
-        Singleton
     }
 
     public class TypeNotRegisteredException : Exception
