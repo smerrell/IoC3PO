@@ -28,7 +28,7 @@ namespace IoC3PO
         {
             if (!_registeredTypes.ContainsKey(contract))
             {
-                throw new TypeNotRegisteredException($"The interface {contract} is not registered.");
+                throw new TypeNotRegisteredException($"The type {contract} is not registered.");
             }
 
             var typeRegistration = _registeredTypes[contract];
