@@ -1,4 +1,6 @@
-﻿using Shouldly;
+﻿using System;
+using System.Runtime.InteropServices.WindowsRuntime;
+using Shouldly;
 using Xunit;
 
 namespace IoC3PO.Tests
@@ -52,6 +54,36 @@ namespace IoC3PO.Tests
             {
                 _container.Resolve<IAstromechDroid>();
             });
+        }
+
+        public interface IDroidVault { }
+        public class DroidVault : IDroidVault { }
+        public interface ICockpit { }
+        public class Cockpit : ICockpit { }
+        public interface ISandCrawler { }
+
+        public class SandCrawler : ISandCrawler
+        {
+            public ICockpit Cockpit { get; }
+            public IDroidVault DroidVault { get; }
+
+            public SandCrawler(ICockpit cockpit, IDroidVault droidVault)
+            {
+                Cockpit = cockpit;
+                DroidVault = droidVault;
+            }
+        }
+
+        [Fact]
+        public void resolves_constructor_arguments_when_registered()
+        {
+            _container.Register<ICockpit, Cockpit>();
+            _container.Register<IDroidVault, DroidVault>();
+            _container.Register<ISandCrawler, SandCrawler>();
+
+            var crawler = _container.Resolve<ISandCrawler>() as SandCrawler;
+            crawler.DroidVault.ShouldNotBeNull();
+            crawler.Cockpit.ShouldNotBeNull();
         }
     }
 }

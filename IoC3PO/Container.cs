@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 
 namespace IoC3PO
 {
@@ -21,27 +23,38 @@ namespace IoC3PO
         {
             return (TInterface) Resolve(typeof(TInterface));
         }
-
-        public object Resolve(Type typeToResolve)
+        private object Resolve(Type contract)
         {
-            if (!_registeredTypes.ContainsKey(typeToResolve))
+            if (!_registeredTypes.ContainsKey(contract))
             {
-                throw new TypeNotRegisteredException($"The interface {typeToResolve} is not registered.");
+                throw new TypeNotRegisteredException($"The interface {contract} is not registered.");
             }
 
-            var typeRegistration = _registeredTypes[typeToResolve];
+            var typeRegistration = _registeredTypes[contract];
             if (typeRegistration.LifeCycle == LifeCycle.Singleton)
             {
                 if (typeRegistration.RegisteredObject == null)
                 {
-                    typeRegistration.RegisteredObject = Activator.CreateInstance(typeRegistration.RegisteredType);
+                    typeRegistration.RegisteredObject = createInstance(typeRegistration.RegisteredType);
                 }
 
                 return typeRegistration.RegisteredObject;
             }
 
-            return Activator.CreateInstance(typeRegistration.RegisteredType);
+            return createInstance(typeRegistration.RegisteredType);
         }
+
+        private object createInstance(Type typeToCreate)
+        {
+            var ctors = typeToCreate.GetConstructors();
+            var longestCtor = ctors.OrderBy(x => x.GetParameters().Length).First();
+            if (longestCtor.GetParameters().Length == 0) return Activator.CreateInstance(typeToCreate);
+
+            var ctorArgs = longestCtor.GetParameters().Select(param => Resolve(param.ParameterType)).ToArray();
+
+            return Activator.CreateInstance(typeToCreate, ctorArgs);
+        }
+
     }
 
     public class TypeRegistration
