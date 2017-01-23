@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 
 namespace IoC3PO
 {
     public class Container
     {
-        private Dictionary<Type, TypeRegistration> _registeredTypes = new Dictionary<Type, TypeRegistration>();
+        private readonly Dictionary<Type, TypeRegistration> _registeredTypes = new Dictionary<Type, TypeRegistration>();
 
         public void Register<TInterface, TImplementation>()
         {
@@ -16,15 +17,16 @@ namespace IoC3PO
 
         public void Register<TInterface, TImplementation>(LifeCycle lifecycle)
         {
+            // create a lifecycle object here?
             _registeredTypes.Add(typeof(TInterface), new TypeRegistration(lifecycle, typeof(TImplementation)));
         }
 
         public TInterface Resolve<TInterface>()
         {
-            return (TInterface) Resolve(typeof(TInterface));
+            return (TInterface) resolve(typeof(TInterface));
         }
 
-        private object Resolve(Type contract)
+        private object resolve(Type contract)
         {
             if (!_registeredTypes.ContainsKey(contract))
             {
@@ -32,34 +34,29 @@ namespace IoC3PO
             }
 
             var typeRegistration = _registeredTypes[contract];
+            var ctorArgs = resolveCtorArguments(typeRegistration.ResolveLongestConstructor());
+
+            // push this out of here and down into the TypeRegistration
             if (typeRegistration.LifeCycle == LifeCycle.Singleton)
             {
                 if (typeRegistration.RegisteredObject == null)
                 {
-                    typeRegistration.RegisteredObject = createInstance(typeRegistration.RegisteredType);
+                    typeRegistration.RegisteredObject = typeRegistration.createInstance(ctorArgs);
                 }
 
                 return typeRegistration.RegisteredObject;
             }
 
-            return createInstance(typeRegistration.RegisteredType);
+            return typeRegistration.createInstance(ctorArgs);
         }
 
-        private object createInstance(Type typeToCreate)
+        private object[] resolveCtorArguments(ConstructorInfo ctorInfo)
         {
-            var longestCtor = typeToCreate
-                .GetConstructors()
-                .OrderBy(x => x.GetParameters().Length)
-                .First();
-
-            var ctorArgs = longestCtor
+            return ctorInfo
                 .GetParameters()
-                .Select(param => Resolve(param.ParameterType))
+                .Select(param => resolve(param.ParameterType))
                 .ToArray();
-
-            return Activator.CreateInstance(typeToCreate, ctorArgs);
         }
-
     }
 
     public class TypeRegistration
@@ -72,6 +69,20 @@ namespace IoC3PO
         {
             LifeCycle = lifeCycle;
             RegisteredType = registeredType;
+        }
+
+        public ConstructorInfo ResolveLongestConstructor()
+        {
+            return RegisteredType
+                .GetConstructors()
+                .OrderBy(x => x.GetParameters().Length)
+                .First();
+        }
+
+        public object createInstance(object[] arguments)
+        {
+            // use lifecycle here?
+            return Activator.CreateInstance(RegisteredType, arguments);
         }
     }
 
