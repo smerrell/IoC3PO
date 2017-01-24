@@ -9,16 +9,16 @@ namespace IoC3PO
     {
         private readonly Dictionary<Type, TypeRegistration> _registeredTypes = new Dictionary<Type, TypeRegistration>();
 
-        public void Register<TInterface, TImplementation>()
+        public void Register<TContract, TImplementation>()
         {
-            Register<TInterface, TImplementation>(LifeCycle.Transient);
+            Register<TContract, TImplementation>(LifeCycle.Transient);
         }
 
-        public void Register<TInterface, TImplementation>(LifeCycle lifecycle)
+        public void Register<TContract, TImplementation>(LifeCycle lifecycle)
         {
-            assertContracts(typeof(TInterface), typeof(TImplementation));
+            assertContracts(typeof(TContract), typeof(TImplementation));
             var resolvedLifecycle = resolveLifecycle(lifecycle);
-            _registeredTypes.Add(typeof(TInterface), new TypeRegistration(resolvedLifecycle, typeof(TImplementation)));
+            _registeredTypes.Add(typeof(TContract), new TypeRegistration(resolvedLifecycle, typeof(TImplementation)));
         }
 
         private void assertContracts(Type contract, Type resolvedType)
@@ -29,9 +29,9 @@ namespace IoC3PO
             }
         }
 
-        public TInterface Resolve<TInterface>()
+        public TContract Resolve<TContract>()
         {
-            return (TInterface) Resolve(typeof(TInterface));
+            return (TContract) Resolve(typeof(TContract));
         }
 
         public object Resolve(Type contract)
