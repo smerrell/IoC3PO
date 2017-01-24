@@ -23,10 +23,10 @@ namespace IoC3PO
 
         public TInterface Resolve<TInterface>()
         {
-            return (TInterface) resolve(typeof(TInterface));
+            return (TInterface) Resolve(typeof(TInterface));
         }
 
-        private object resolve(Type contract)
+        public object Resolve(Type contract)
         {
             if (!_registeredTypes.ContainsKey(contract))
             {
@@ -42,7 +42,7 @@ namespace IoC3PO
         {
             return ctorInfo
                 .GetParameters()
-                .Select(param => resolve(param.ParameterType))
+                .Select(param => Resolve(param.ParameterType))
                 .ToArray();
         }
 
