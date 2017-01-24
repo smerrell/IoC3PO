@@ -83,5 +83,30 @@ namespace IoC3PO.Tests
             crawler.DroidVault.ShouldNotBeNull();
             crawler.Cockpit.ShouldNotBeNull();
         }
+
+        public interface ITestInterface { }
+        public class IDontImplementITestInterface { }
+
+        [Fact]
+        public void throws_exception_if_type_registered_does_not_implement_interface()
+        {
+            Should.Throw<TypeNotAssignableToContractException>(() =>
+            {
+                _container.Register<ITestInterface, IDontImplementITestInterface>();
+            });
+        }
+
+        public class BaseClass { }
+        public class SubClass : BaseClass { }
+        public class NotASubClass { }
+        [Fact]
+        public void throws_exception_when_class_it_not_a_subclass()
+        {
+            _container.Register<BaseClass, SubClass>();
+            Should.Throw<TypeNotAssignableToContractException>(() =>
+            {
+                _container.Register<BaseClass, NotASubClass>();
+            });
+        }
     }
 }

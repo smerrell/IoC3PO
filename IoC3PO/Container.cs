@@ -16,9 +16,17 @@ namespace IoC3PO
 
         public void Register<TInterface, TImplementation>(LifeCycle lifecycle)
         {
-            // create a lifecycle object here?
+            assertContracts(typeof(TInterface), typeof(TImplementation));
             var resolvedLifecycle = resolveLifecycle(lifecycle);
             _registeredTypes.Add(typeof(TInterface), new TypeRegistration(resolvedLifecycle, typeof(TImplementation)));
+        }
+
+        private void assertContracts(Type contract, Type resolvedType)
+        {
+            if (!contract.IsAssignableFrom(resolvedType))
+            {
+                throw new TypeNotAssignableToContractException($"{resolvedType} is not assignable to {contract}. Unable to Register type.");
+            }
         }
 
         public TInterface Resolve<TInterface>()
@@ -86,6 +94,13 @@ namespace IoC3PO
     public class TypeNotRegisteredException : Exception
     {
         public TypeNotRegisteredException(string message) : base(message)
+        {
+        }
+    }
+
+    public class TypeNotAssignableToContractException : Exception
+    {
+        public TypeNotAssignableToContractException(string message) : base(message)
         {
         }
     }
