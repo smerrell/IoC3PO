@@ -9,6 +9,12 @@ namespace IoC3PO
     {
         private readonly Dictionary<Type, TypeRegistration> _registeredTypes = new Dictionary<Type, TypeRegistration>();
 
+        internal void register(Type concreteType)
+        {
+            var resolvedLifecycle = resolveLifecycle(LifeCycle.Transient);
+            _registeredTypes.Add(concreteType, new TypeRegistration(resolvedLifecycle, concreteType));
+        }
+
         public void Register<TContract, TImplementation>()
         {
             Register<TContract, TImplementation>(LifeCycle.Transient);

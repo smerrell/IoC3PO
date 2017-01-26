@@ -15,17 +15,13 @@ namespace IoC3PO.Web.Controllers
     [Authorize]
     public class AccountController : Controller
     {
+        private readonly IDroid _droid;
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
 
-        public AccountController()
+        public AccountController(IDroid droid)
         {
-        }
-
-        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager )
-        {
-            UserManager = userManager;
-            SignInManager = signInManager;
+            _droid = droid;
         }
 
         public ApplicationSignInManager SignInManager
@@ -57,6 +53,7 @@ namespace IoC3PO.Web.Controllers
         [AllowAnonymous]
         public ActionResult Login(string returnUrl)
         {
+            _droid.Type = "BB8";
             ViewBag.ReturnUrl = returnUrl;
             return View();
         }

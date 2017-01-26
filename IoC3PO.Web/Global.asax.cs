@@ -19,7 +19,8 @@ namespace IoC3PO.Web
             var container = new Container();
             container.Register<IDroid, Artoo>();
             container.Register<ISandCrawler, SandCrawler>();
-            container.Register<HomeController, HomeController>();
+
+            container.ScanControllersInAssembly(typeof(HomeController));
 
             //DependencyResolver.SetResolver(new IoC3PODependencyResolver(container));
             ControllerBuilder.Current.SetControllerFactory(new IoC3POControllerFactory(container));
