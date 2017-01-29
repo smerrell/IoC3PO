@@ -1,13 +1,26 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IoC3PO", "IoC3PO\IoC3PO.csproj", "{0C76AAD5-AEF2-42EB-B4B4-8BC60440F989}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IoC3PO.Tests", "IoC3PO.Tests\IoC3PO.Tests.csproj", "{3B74790B-0E7E-43E9-8A3D-119B815B4FC6}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IoC3PO.Web", "IoC3PO.Web\IoC3PO.Web.csproj", "{28ADEDDA-88AF-4F35-BC0C-D876CD31D77B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{89AD7728-8A22-4E7C-816F-317BBF38BE2F}"
+EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "IoC3P0Core", "src\IoC3P0Core\IoC3P0Core.xproj", "{BF846CD0-EA33-43AF-857F-DE22C5A6B9AF}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{F9363BCE-2CEF-4473-8A1A-FF6A8EF7ED0A}"
+EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "IoC3POCore.Tests", "tests\IoC3POCore.Tests\IoC3POCore.Tests.xproj", "{868AA4EB-2ECB-4466-95AE-79B81215D7C6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{DDD94F1F-BF0D-4272-BB58-C638670E50F3}"
+	ProjectSection(SolutionItems) = preProject
+		global.json = global.json
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,8 +40,20 @@ Global
 		{28ADEDDA-88AF-4F35-BC0C-D876CD31D77B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{28ADEDDA-88AF-4F35-BC0C-D876CD31D77B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{28ADEDDA-88AF-4F35-BC0C-D876CD31D77B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BF846CD0-EA33-43AF-857F-DE22C5A6B9AF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BF846CD0-EA33-43AF-857F-DE22C5A6B9AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BF846CD0-EA33-43AF-857F-DE22C5A6B9AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BF846CD0-EA33-43AF-857F-DE22C5A6B9AF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{868AA4EB-2ECB-4466-95AE-79B81215D7C6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{868AA4EB-2ECB-4466-95AE-79B81215D7C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{868AA4EB-2ECB-4466-95AE-79B81215D7C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{868AA4EB-2ECB-4466-95AE-79B81215D7C6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{BF846CD0-EA33-43AF-857F-DE22C5A6B9AF} = {89AD7728-8A22-4E7C-816F-317BBF38BE2F}
+		{868AA4EB-2ECB-4466-95AE-79B81215D7C6} = {F9363BCE-2CEF-4473-8A1A-FF6A8EF7ED0A}
 	EndGlobalSection
 EndGlobal
