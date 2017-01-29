@@ -9,12 +9,6 @@ namespace IoC3P0Core
     {
         private readonly Dictionary<Type, TypeRegistration> _registeredTypes = new Dictionary<Type, TypeRegistration>();
 
-        internal void register(Type concreteType)
-        {
-            var resolvedLifecycle = resolveLifecycle(LifeCycle.Transient);
-            _registeredTypes.Add(concreteType, new TypeRegistration(resolvedLifecycle, concreteType));
-        }
-
         public void Register<TContract, TImplementation>()
         {
             Register<TContract, TImplementation>(LifeCycle.Transient);
@@ -22,9 +16,13 @@ namespace IoC3P0Core
 
         public void Register<TContract, TImplementation>(LifeCycle lifecycle)
         {
-            assertContracts(typeof(TContract), typeof(TImplementation));
-            var resolvedLifecycle = resolveLifecycle(lifecycle);
-            _registeredTypes.Add(typeof(TContract), new TypeRegistration(resolvedLifecycle, typeof(TImplementation)));
+            Register(typeof(TContract), typeof(TImplementation), lifecycle);
+        }
+
+        public void Register(Type contract, Type implementation, LifeCycle lifecycle)
+        {
+            assertContracts(contract, implementation);
+            _registeredTypes.Add(contract, new TypeRegistration(resolveLifecycle(lifecycle), implementation));
         }
 
         private void assertContracts(Type contract, Type resolvedType)
