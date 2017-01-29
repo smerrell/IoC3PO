@@ -25,6 +25,12 @@ namespace IoC3P0Core
             _registeredTypes.Add(contract, new TypeRegistration(resolveLifecycle(lifecycle), implementation));
         }
 
+        public void RegisterObject(Type contract, object instantiated, LifeCycle lifecycle)
+        {
+            //assertContracts(contract, instantiated.GetType());
+            _registeredTypes.Add(contract, new TypeRegistration(resolveLifecycle(lifecycle, instantiated), instantiated.GetType()));
+        }
+
         private void assertContracts(Type contract, Type resolvedType)
         {
             if (!contract.GetTypeInfo().IsAssignableFrom(resolvedType))
@@ -58,12 +64,12 @@ namespace IoC3P0Core
                 .ToArray();
         }
 
-        private ILifeCycle resolveLifecycle(LifeCycle lifecycle)
+        private ILifeCycle resolveLifecycle(LifeCycle lifecycle, object instance = null)
         {
             // strategy pattern this?
             if (lifecycle == LifeCycle.Singleton)
             {
-                return new SingletonLifecycle();
+                return new SingletonLifecycle(instance);
             }
 
             return new TransientLifecycle();

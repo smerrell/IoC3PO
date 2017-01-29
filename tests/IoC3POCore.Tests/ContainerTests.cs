@@ -109,5 +109,27 @@ namespace IoC3POCore.Tests
                 _container.Register<BaseClass, NotASubClass>();
             });
         }
+
+        public interface IInstantiated
+        {
+            string Name { get; }
+        }
+        public class Instantiated : IInstantiated {
+            public Instantiated()
+            {
+                Name = "I am instantiated already";
+            }
+
+            public string Name { get; }
+        }
+
+        [Fact]
+        public void registers_an_instantiated_class()
+        {
+            var instantiated = new Instantiated();
+            _container.RegisterObject(typeof(IInstantiated), instantiated, LifeCycle.Singleton);
+            var resolvedInstantiated = _container.Resolve<IInstantiated>();
+            resolvedInstantiated.ShouldBeSameAs(instantiated);
+        }
     }
 }

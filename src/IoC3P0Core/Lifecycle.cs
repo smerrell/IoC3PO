@@ -25,6 +25,11 @@ namespace IoC3P0Core
     {
         private object singletonInstance;
 
+        public SingletonLifecycle(object instance = null)
+        {
+            singletonInstance = instance;
+        }
+
         public object CreateInstance(Type instanceType, object[] arguments)
         {
             if (singletonInstance == null)
